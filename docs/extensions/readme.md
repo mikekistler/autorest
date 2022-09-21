@@ -1089,7 +1089,10 @@ See [Azure RPC Spec](https://github.com/Azure/azure-resource-manager-rpc/blob/ma
 **Schema**:
 Field Name | Type | Description
 ---|:---:|---
-final-state-via | `string` - one of `azure-async-operation` or `location` or `original-uri` or `operation-location` | `final-state-via` SHOULD BE one of
+final-state-via | `string`<br/> - one of `azure-async-operation` or `location` or `original-uri` or `operation-location` | How to obtain the operation result |
+GetOperationStatus | OperationLink | Link to operation to obtain operation status |
+
+`final-state-via` SHOULD BE one of
 
 - `azure-async-operation` - poll until terminal state, skip any final GET on Location or Origin-URI and use the final response at the uri pointed to by the header `Azure-AsyncOperation`.
 - `location` - poll until terminal state, if the initial response had a `Location` header, a final GET will be done. Default behavior for POST operation.
@@ -1097,6 +1100,13 @@ final-state-via | `string` - one of `azure-async-operation` or `location` or `or
 - `operation-location` - poll until terminal state, skip any final GET on Location or Origin-URI and use the final response at the uri pointed to by the header `Operation-Location`
 
 The polling mechanism in itself remains unchanged, the only impact of this option could be to do an additional final GET, or skip a final GET.
+
+**OperationLink**
+Field Name | Type | Description
+---|:---:|---
+operationRef | `string` | A relative or absolute URI reference to an OAS operation. This field is mutually exclusive of the `operationId` field, and MUST point to an [Operation Object](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md#operationObject).
+operationId | `string` | The name of an _existing_, resolvable OAS operation, as defined with a unique `operationId`. This field is mutually exclusive of the `operationRef` field.
+parameters | Map[`string`, Any \| {expression}] | A map representing parameters to pass to the referenced operation in the same format as the [`parameters` field of an OpenAPI 3 `link object`](https://github.com/OAI/OpenAPI-Specification/blob/3.0.3/versions/3.0.3.md#linkParameters).
 
 **Parent element**: [Operation Object](https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#operationObject)
 
